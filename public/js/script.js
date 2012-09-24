@@ -1,6 +1,5 @@
 $(document).ready(function() {
 	window.user = 'n';
-	$('#chatwindow').hide();
 
 	var socket = new io.connect('http://localhost:3000');
 
@@ -32,8 +31,10 @@ function connect(team) {
 	window.user = team;
 	var socket = new io.connect('http://localhost:3000');
 	socket.emit('declare', team);
+	$('#waiting').fadeIn();
 
 	socket.on('readyForChat', function() {
+		$('#waiting').hide();
 		$('#chatwindow').fadeIn();
 	});
 

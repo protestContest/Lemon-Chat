@@ -1,3 +1,7 @@
+#chatwindow {
+	display: none;
+}
+
 #chatcontent {
 	border: 1px solid black;
 	width: 500px;
@@ -16,4 +20,8 @@ p.r {
 
 p.d {
 	background: #775cff;
+}
+
+#waiting {
+	display: none;
 }
