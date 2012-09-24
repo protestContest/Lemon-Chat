@@ -60,7 +60,7 @@ sio.on('connection', function(client) {
 			console.log('partner is ' + partnerId);
 
 			// if not, queue them up
-			if (partnerId === null) {
+			if (partnerId === null || sio.sockets.sockets[partnerId] === undefined) {
 				var queue = team + 'queue';
 				enqueue(client.id, queue);
 			}
@@ -103,6 +103,11 @@ function readyClient(client, chan) {
 	client.on('message', function(msg) {
 		console.log(JSON.stringify(msg));
 		client.speaker.publish(chan, JSON.stringify(msg));
+	});
+
+	client.on('disconnect', function() {
+		console.log(client.id + ' disconnected.');
+		client.speaker.publish(chan, '{"u": "n", "message": "Your partner has disconnected.", "disconnect": "true"}')
 	});
 
 	client.emit('readyForChat');
