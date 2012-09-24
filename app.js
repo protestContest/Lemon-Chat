@@ -40,28 +40,36 @@ app.listen(3000, function(){
 
 // controls channel ids and queues
 var rmaster = redis.createClient();
+// next available channel id
 rmaster.set('chanID', 0);
+
+// Socket.io mess
 
 var sio = io.listen(app);
 
 sio.on('connection', function(client) {
 
+	// signal sent when client 'votes' in browser
 	client.on('declare', function(team) {
 		console.log('someone declared ' + team);
 
 		var otherteam = (team === 'r') ? 'd' : 'r';
 		
-		rmaster.rpop(otherteam+'queue', function(err, partner) {
-			console.log('partner is ' + partner);
-			if (partner === null) {
+		// check if we have someone waiting in the other queue
+		rmaster.rpop(otherteam+'queue', function(err, partnerId) {
+			console.log('partner is ' + partnerId);
+
+			// if not, queue them up
+			if (partnerId === null) {
 				var queue = team + 'queue';
 				enqueue(client.id, queue);
 			}
+			// otherwise connect them together
 			else {
 				console.log('match found');
 				rmaster.get('chanID', function(err, res) {
 					var chan = 'chan' + res;
-					readyClient(sio.sockets.sockets[partner], chan);
+					readyClient(sio.sockets.sockets[partnerId], chan);
 					readyClient(client, chan);
 					rmaster.incr('chanID');
 				});
@@ -71,12 +79,15 @@ sio.on('connection', function(client) {
 
 });
 
-function enqueue(client, queue) {
+// Auxilliary functions
+
+// add a socket id to a queue
+function enqueue(clientId, queue) {
 	console.log('new one in ' + queue);
-	rmaster.lpush(queue, client);
+	rmaster.lpush(queue, clientId);
 }
 
-
+// prepare a socket for chatting
 function readyClient(client, chan) {
 	client.listener = redis.createClient();
 	client.listener.subscribe(chan);
