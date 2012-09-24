@@ -4,6 +4,6 @@
  */
 
 exports.index = function(req, res){
-	res.render('index', { title: 'Lemon Chat' })
+	res.render('index', { title: 'Political Chat' })
 };
 
