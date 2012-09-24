@@ -1,15 +1,17 @@
 $(document).ready(function() {
+	window.user = 'n';
 	$('#chatwindow').hide();
 
 	var socket = new io.connect('http://localhost:3000');
 
 	socket.on('message', function(msg) {
-		console.log(msg);
-		$('textarea').append(msg + '\n');
+		console.log('message: ' + msg);
+		msg = $.parseJSON(msg);
+		$('#chatwindow').append('<p class="' + msg.u + '">' + msg.message + '</p>');
 	});
 
 	$('#sendbtn').click(function() {
-		var msg = {u: 'd', message: $('#input').val()};
+		var msg = {u: window.user, message: $('#input').val()};
 		socket.json.send(msg);
 	});
 
@@ -20,6 +22,7 @@ $(document).ready(function() {
 });
 
 function connect(team) {
+	window.user = team;
 	var socket = new io.connect('http://localhost:3000');
 	socket.emit('declare', team);
 
@@ -27,7 +30,4 @@ function connect(team) {
 		$('#chatwindow').fadeIn();
 	});
 
-	socket.on('testing', function() {
-			alert('yo');
-	});
 }

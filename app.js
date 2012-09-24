@@ -38,8 +38,9 @@ app.listen(3000, function(){
 	console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
+// controls channel ids and queues
 var rmaster = redis.createClient();
-rmaster.set('lastID', 0);
+rmaster.set('chanID', 0);
 
 var sio = io.listen(app);
 
@@ -58,11 +59,11 @@ sio.on('connection', function(client) {
 			}
 			else {
 				console.log('match found');
-				rmaster.get('lastID', function(err, res) {
+				rmaster.get('chanID', function(err, res) {
 					var chan = 'chan' + res;
 					readyClient(sio.sockets.sockets[partner], chan);
 					readyClient(client, chan);
-					rmaster.incr('lastID');
+					rmaster.incr('chanID');
 				});
 			}
 		});
@@ -78,28 +79,19 @@ function enqueue(client, queue) {
 
 function readyClient(client, chan) {
 	client.listener = redis.createClient();
+	client.listener.subscribe(chan);
 
-	/*
-	client.listener = redis.createClient(function() {
-		*/client.listener.subscribe(chan);
-		client.listener.on('message', function(chan, msg) {
-			console.log(msg);
-			client.send(msg);
-		});
-/*	});
-
-	client.speaker = redis.createClient(function() {
-		client.on('message', function(msg) {
-			console.log(msg.message);
-			client.speaker.publish(chan, msg.message);
-		});
+	client.listener.on('message', function(chan, msg) {
+		console.log(msg);
+		client.send(msg);
 	});
-*/
+	
+
 	client.speaker = redis.createClient();
 
 	client.on('message', function(msg) {
-		console.log(msg.message);
-		client.speaker.publish(chan, msg.message);
+		console.log(JSON.stringify(msg));
+		client.speaker.publish(chan, JSON.stringify(msg));
 	});
 
 	client.emit('readyForChat');
