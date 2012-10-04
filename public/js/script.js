@@ -13,11 +13,16 @@ $(document).ready(function() {
 			$('#sendbtn').click();
 		}
 	});
+
+        console.log("host: " + window.location.host);
+        console.log("hostname: " + window.location.hostname);
+        console.log("host.href: " + window.location.host.href);
 });
 
 function connect(team) {
+        var socket = new io.connect(window.location.host);
 	window.user = team;
-	var socket = new io.connect('http://localhost:3000');
+    
 
 	socket.emit('declare', team);
 	$('#waiting').fadeIn();

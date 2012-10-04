@@ -7,7 +7,28 @@
 var express = require('express')
 	, routes = require('./routes')
 	, io = require('socket.io')
-	, redis = require('redis');
+        , redis = require('redis')
+        , cf = require('./cloudfoundry');
+
+var redis_host =  cf.redis?cf.redis.credentials.host:'localhost';
+var redis_port = cf.redis?cf.redis.credentials.port:6379;
+var redis_password = cf.redis?cf.redis.credentials.password:undefined;
+
+
+console.log(redis_host);
+console.log(redis_port);
+console.log(redis_password);
+
+// controls channel ids and queues
+
+var rmaster = redis.createClient(redis_port, redis_host);
+if(cf.runningInTheCloud) {
+    rmaster.auth(redis_password);
+}
+
+
+// next available channel id
+rmaster.set('chanID', 0);
 
 var app = module.exports = express.createServer();
 
@@ -38,14 +59,17 @@ app.listen(3000, function(){
 	console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
 });
 
-// controls channel ids and queues
-var rmaster = redis.createClient();
-// next available channel id
-rmaster.set('chanID', 0);
+
 
 // Socket.io mess
 
+
+
 var sio = io.listen(app);
+
+sio.set("transports", [
+    "xhr-polling"
+]);
 
 sio.on('connection', function(client) {
 
@@ -89,7 +113,12 @@ function enqueue(clientId, queue) {
 
 // prepare a socket for chatting
 function readyClient(client, chan) {
-	client.listener = redis.createClient();
+        client.listener = redis.createClient(redis_port, redis_host);
+        if (cf.runningInTheCloud) {
+            client.listener.auth(redis_password);
+        }
+
+
 	client.listener.subscribe(chan);
 
 	client.listener.on('message', function(chan, msg) {
@@ -98,7 +127,11 @@ function readyClient(client, chan) {
 	});
 	
 
-	client.speaker = redis.createClient();
+        client.speaker = redis.createClient(redis_port, redis_host);
+
+        if (cf.runningInTheCloud) {
+            client.speaker.auth(redis_password);
+        }
 
 	client.on('message', function(msg) {
 		console.log(JSON.stringify(msg));
