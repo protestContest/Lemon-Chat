@@ -22,6 +22,7 @@ console.log(redis_password);
 // controls channel ids and queues
 
 var rmaster = redis.createClient(redis_port, redis_host);
+rmaster.flushall(redis.print);
 if(cf.runningInTheCloud) {
     rmaster.auth(redis_password);
 }
@@ -82,6 +83,9 @@ sio.on('connection', function(client) {
 		// check if we have someone waiting in the other queue
 		rmaster.rpop(otherteam+'queue', function(err, partnerId) {
 			console.log('partner is ' + partnerId);
+			if (partnerId !== null) {
+			    console.log("socket: " + sio.sockets.sockets[partnerId]);
+			}
 
 			// if not, queue them up
 			if (partnerId === null || sio.sockets.sockets[partnerId] === undefined) {
