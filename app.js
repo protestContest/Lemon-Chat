@@ -14,7 +14,6 @@ var redis_host =  cf.redis?cf.redis.credentials.host:'localhost';
 var redis_port = cf.redis?cf.redis.credentials.port:6379;
 var redis_password = cf.redis?cf.redis.credentials.password:undefined;
 
-
 console.log(redis_host);
 console.log(redis_port);
 console.log(redis_password);
@@ -68,9 +67,9 @@ app.listen(3000, function(){
 
 var sio = io.listen(app);
 
-sio.set("transports", [
-    "xhr-polling"
-]);
+sio.set("transports", ["xhr-polling"]);
+sio.set("close timeout", 20);
+sio.set("heartbeat interval", 10);
 
 sio.on('connection', function(client) {
 
@@ -105,7 +104,13 @@ sio.on('connection', function(client) {
 		});
 	});
 
+	client.on("disconnect", function () {
+		console.log("a client disconnected");
+		sio.sockets.sockets[client.id] = undefined;
+	});
 });
+
+
 
 // Auxilliary functions
 
