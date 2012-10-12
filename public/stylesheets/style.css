@@ -1,6 +1,91 @@
-#chatwindow {
-	display: none;
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Helvetica Neue;
+  background: #ebebf3;
 }
+h1 {
+  margin: 0;
+}
+.column {
+  display: inline-block;
+  position: relative;
+}
+.column1 {
+  display: inline-block;
+  position: relative;
+  width: 336px;
+}
+.column2 {
+  display: inline-block;
+  position: relative;
+  width: 384px;
+}
+.column3 {
+  display: inline-block;
+  position: relative;
+  width: 192px;
+}
+.container {
+  width: 960px;
+  position: relative;
+  margin: auto;
+}
+#banner {
+  height: 70%;
+}
+#header {
+  color: #ebebf3;
+  margin: 0 0 20px 0;
+  padding: 20px 0;
+  background: #3c3b6e;
+}
+#header ul {
+  margin: 0;
+  padding: 0;
+}
+#header ul li {
+  display: inline-block;
+  margin-right: 40px;
+}
+#header ul li a {
+  font-size: 16px;
+  color: #ebebf3;
+  text-decoration: none;
+}
+#header ul li a:hover {
+  color: #807fb2;
+}
+button {
+  margin: 0 0 0 -20px;
+  padding: 10px 20px;
+  width: 336px;
+  text-align: left;
+  font-size: 16px;
+  border-width: 3px 0 0 0;
+  border-color: #b22234;
+  background-color: #ebebf3;
+}
+button:hover {
+  cursor: pointer;
+}
+button:hover span {
+  display: block;
+}
+button span {
+  display: none;
+  float: right;
+  color: #b22234;
+}
+#chatwindow {
+  display: none;
+}
+#waiting {
+  display: none;
+}
+/*
 
 #chatcontent {
 	border: 1px solid black;
@@ -21,7 +106,4 @@ p.r {
 p.d {
 	background: #775cff;
 }
-
-#waiting {
-	display: none;
-}
+*/

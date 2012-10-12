@@ -3,8 +3,11 @@ $(document).ready(function() {
 
 	// when the user 'votes'
 	$('button').click(function() {
+		$('#banner').animate({
+			height: '0%'
+		});
+		$('#buttons').fadeOut('fast');
 		connect($(this).val());
-		$('#buttons').fadeOut();
 	});
 
 	// press enter to send
