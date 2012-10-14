@@ -1,14 +1,42 @@
-h1= title
+#banner
+#header
+	.container
+		.column1
+			h1 bipartichat
+		.column2
+			ul#options
+				li
+					a(href='#') about
+				li
+					a(href='#') contact
+				li
+					a(href='#') more from NINA
+		.column3
+			ul#register
+				li
+					a(href='#') register to vote
 
-div(id='buttons')
-	button(value='d') Democrat
-	button(value='r') Republican
+#buttons
+	.container
+		.column1
+		.column2
+			button(value='d') I'm a Democrat <span>&#10004;</span>
+			br
+			button(value='r') I'm a Republican <span>&#10004;</span>
+		.column3
+#waiting
+	.container
+		.column1
+		.column2
+			p Waiting for a partner...
+		.column3
 
-div(id='waiting')
-	p Waiting for a partner...
-
-div(id='chatwindow')
-	div(id='chatcontent')
-	br
-	input(type='text', id='input')
-	input(type='submit', id='sendbtn', value='Send')
+#chatwindow
+	.container
+		.column1
+		.column2
+			div(id='chatcontent')
+			br
+			input(type='text', id='input', placeholder="click here to type something...")
+			input(type='submit', id='sendbtn', value='Send')
+		.column3
